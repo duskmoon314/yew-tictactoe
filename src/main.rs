@@ -111,23 +111,15 @@ fn tictactoe() -> Html {
         SquareValue::None
     }
 
-    {
-        let history_dep = history.clone();
-        let history = history.clone();
-        let step_dep = step.clone();
-        let step = step.clone();
-        let winner = winner.clone();
+    use_effect_with_deps(
+        move |(history, step, winner)| {
+            let current = history.clone()[*step.clone()];
+            winner.clone().set(calculate_winner(current));
 
-        use_effect_with_deps(
-            move |_| {
-                let current = history[*step];
-                winner.set(calculate_winner(current));
-
-                || ()
-            },
-            (history_dep, step_dep),
-        );
-    }
+            || ()
+        },
+        (history.clone(), step.clone(), winner.clone()),
+    );
 
     let handle_click = {
         let history = history.clone();
