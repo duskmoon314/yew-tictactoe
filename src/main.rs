@@ -35,16 +35,10 @@ fn square(SquareProps { value, on_click }: &SquareProps) -> Html {
     }
 }
 
-#[derive(Properties)]
+#[derive(Properties, PartialEq)]
 struct BoardProps {
     squares: [SquareValue; 9],
     on_click: Callback<usize>,
-}
-
-impl PartialEq for BoardProps {
-    fn eq(&self, other: &Self) -> bool {
-        self.squares == other.squares
-    }
 }
 
 #[function_component(Board)]
@@ -147,11 +141,9 @@ fn tictactoe() -> Html {
 
     let undo = {
         let step = step.clone();
-        let winner = winner.clone();
         Callback::from(move |_| {
             if *step > 0 {
                 step.set(*step - 1);
-                winner.set(SquareValue::None);
             }
         })
     };
