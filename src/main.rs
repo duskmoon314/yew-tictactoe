@@ -139,13 +139,9 @@ fn tictactoe() -> Html {
         })
     };
 
-    let undo = {
+    let jump_to = {
         let step = step.clone();
-        Callback::from(move |_| {
-            if *step > 0 {
-                step.set(*step - 1);
-            }
-        })
+        Callback::from(move |s: usize| step.set(s))
     };
 
     html! {
@@ -160,7 +156,28 @@ fn tictactoe() -> Html {
                         w => format!("Winner {}", w)
                     }}
                 </div>
-                <button onclick={undo}> { "UNDO" } </button>
+                // <button onclick={undo}> { "UNDO" } </button>
+                <ol>
+                    {
+                        (0..history.len())
+                        .map(|i| {
+                            html! {
+                                <li key={i}>
+                                    <button onclick={{
+                                        let jump_to = jump_to.clone();
+                                        Callback::from(move |_| jump_to.emit(i))
+                                    }}>
+                                        {match i {
+                                            0 => "Go to game start".to_string(),
+                                            i => format!("Go to move #{}", i)
+                                        }}
+                                    </button>
+                                </li>
+                            }
+                        })
+                        .collect::<Html>()
+                    }
+                </ol>
             </div>
         </main>
     }
